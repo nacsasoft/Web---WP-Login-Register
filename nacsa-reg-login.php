@@ -8,25 +8,6 @@ Author: Nacsasoft
 Author URI: https://nacsasoft.hu
 */
 
-/*
-Használat:
-
--[register_form]
-    -regisztrációs form megjelenítése
-    -mezők:
-        -Név
-        -Email
-        -Telefonszám
-        -Weboldal
-        -Jelszó
-        -Jelszó mégegyszer
-    -sikeres regisztráció után:
-        -új oldal létrehozása a domain.hu/felhasznalo -névvel
-        -átirányítás az új oldalra
-        
--[login_form]       : beléptetés
-*/
-
 // regisztrációs form létrehozása
 function nacsa_registration_form() {
  
