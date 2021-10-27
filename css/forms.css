@@ -1,0 +1,15 @@
+/* alap stílusok beállítása a formokhoz */
+
+.nacsa_form label { display: block; float: left; width: 130px; }
+.nacsa_form input[type="text"], .nacsa_form input[type="password"],
+.nacsa_form input[type="email"] {
+	padding: 4px 8px;
+	background: #f0f0f0;
+	border: 1px solid #ccc;
+}
+.nacsa_form input[type="text"]:focus, .nacsa_form input[type="password"]:focus,
+.nacsa_form input[type="email"]:focus {
+	border-color: #aaa;
+}
+ 
+.nacsa_errors { padding: 8px; border: 1px solid #f50; margin: 0 0 15px; }
