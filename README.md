@@ -1,5 +1,5 @@
 # Web---WP-Login-Register
-<h1>Egyedi regisztráció és beléptetés WordPress-hez.</h1>
+<h2>Egyedi regisztráció és beléptetés WordPress-hez.</h2>
 <h3><b><u>Plugin működése:</u></b></h3>
 <p>Következő rövidkódok (shortcode) használhatók:<br></p>
 <p><b>[register_form]</b></p>
