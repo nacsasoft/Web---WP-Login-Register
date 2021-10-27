@@ -3,18 +3,23 @@ Egyedi regisztráció és beléptetés WordPress-hez.
 
 <b><u>Plugin működése:</u></b>
 
--[register_form]
-    -regisztrációs form megjelenítése
-    -mezők:
-        -Név
-        -Email
-        -Telefonszám
-        -Weboldal
-        -Jelszó
-        -Jelszó mégegyszer
-    -sikeres regisztráció után:
-        -új oldal létrehozása a domain.hu/felhasznalo -névvel
-        -átirányítás az új oldalra
+Következő rövidkódok (shortcode) használhatók:<br>
+
+<ul>[register_form]
+    <li>regisztrációs form megjelenítése</li>
+    <ul>mezők:
+        <li>Név</li>
+        <li>Email</li>
+        <li>Telefonszám</li>
+        <li>Weboldal</li>
+        <li>Jelszó</li>
+        <li>Jelszó mégegyszer</li>
+    </ul>
+    <ul>sikeres regisztráció után:</ul>
+        <li>új oldal létrehozása a domain.hu/felhasznalo -névvel</li>
+        <li>átirányítás az új oldalra</li>
+    </ul>
+</ul>
         
 -[login_form]       : beléptetés
 */
