@@ -8,7 +8,12 @@ Author: Nacsasoft
 Author URI: https://nacsasoft.hu
 */
 
-// regisztrációs form létrehozása
+
+/**
+ * Regisztrációs form létrehozása
+ *
+ * @return void
+ */
 function nacsa_registration_form() {
  
 	// csak azok látják akik még nincsenek belépve
@@ -34,7 +39,11 @@ function nacsa_registration_form() {
 add_shortcode('register_form', 'nacsa_registration_form');
 
 
-// belépés form
+/**
+ * Belépés form
+ *
+ * @return void
+ */
 function nacsa_login_form() {
  
 	if(!is_user_logged_in()) {
@@ -54,12 +63,16 @@ function nacsa_login_form() {
 add_shortcode('login_form', 'nacsa_login_form');
 
 
-// regisztrációs form felépítése HTML-ben
-function nacsa_registration_form_fields() {
+/**
+ * Regisztrációs form felépítése HTML-ben
+ *
+ * @return void
+ */
+function nacsa_registration_form_fields($userProfil = false, $arrProfile = null) {
  
     // így nem kell bíbelődni az echo-kal, egy az egyben kinyomjuk
 	ob_start(); ?>	
-		<h3 class="nacsa_header"><?php _e('Regisztráció'); ?></h3>
+		<h3 class="nacsa_header"><?php $userProfil ? _e('Regisztrációs adatok frissítése') : _e('Regisztráció'); ?></h3>
  
 		<?php 
 		// az esetleges hibákat itt fogjuk megjeleníteni
@@ -69,11 +82,11 @@ function nacsa_registration_form_fields() {
 			<fieldset>
 				<p>
 					<label for="nacsa_user_Login"><?php _e('Név'); ?></label>
-					<input name="nacsa_user_login" id="nacsa_user_login" class="required" type="text"/>
+					<input name="nacsa_user_login" id="nacsa_user_login" class="required" type="text" value="<?php $userProfil ? $arrProfile['Nev'] : ''; ?>"/>
 				</p>
 				<p>
 					<label for="nacsa_user_email"><?php _e('Email'); ?></label>
-					<input name="nacsa_user_email" id="nacsa_user_email" class="required" type="email"/>
+					<input name="nacsa_user_email" id="nacsa_user_email" class="required" type="email" value="<?php $userProfil ? $arrProfile['Email'] : ''; ?>"/>
 				</p>
                 <p>
 					<label for="nacsa_user_phone"><?php _e('Telefonszám'); ?></label>
@@ -103,7 +116,11 @@ function nacsa_registration_form_fields() {
 }
 
 
-// belépés form összerakása
+/**
+ * Belépés form összerakása
+ * 
+ * @return void
+ */
 function nacsa_login_form_fields() {
  
 	ob_start(); ?>
@@ -135,7 +152,11 @@ function nacsa_login_form_fields() {
 }
 
 
-// belépéskor megadott adatok ellenörzése 
+/**
+ * Belépéskor megadott adatok ellenörzése 
+ *
+ * @return void
+ */
 function nacsa_login_member() {
  
 	if(isset($_POST['nacsa_user_login']) && wp_verify_nonce($_POST['nacsa_login_nonce'], 'nacsa-login-nonce')) {
@@ -181,109 +202,147 @@ function nacsa_login_member() {
 add_action('init', 'nacsa_login_member');
 
 
-// új felhasználó regisztrálása, a megadott adatok ellenörzése majd belépés
+/**
+ * Új felhasználó regisztrálása, a megadott adatok ellenörzése
+ * Új oldal létrehozása majd belépés
+ *
+ * @return void
+ */
 function nacsa_add_new_member() {
     if (isset( $_POST["nacsa_user_login"] ) && wp_verify_nonce($_POST['nacsa_register_nonce'], 'nacsa-register-nonce')) {
-      $user_login		= $_POST["nacsa_user_login"];	
-      $user_email		= $_POST["nacsa_user_email"];
-      $user_phone 	    = $_POST["nacsa_user_phone"];
-      $user_webpage	 	= $_POST["nacsa_user_webpage"];
-      $user_pass		= $_POST["nacsa_user_pass"];
-      $pass_confirm 	= $_POST["nacsa_user_pass_confirm"];
+		$user_login		= $_POST["nacsa_user_login"];	
+		$user_email		= $_POST["nacsa_user_email"];
+		$user_phone 	    = $_POST["nacsa_user_phone"];
+		$user_webpage	 	= $_POST["nacsa_user_webpage"];
+		$user_pass		= $_POST["nacsa_user_pass"];
+		$pass_confirm 	= $_POST["nacsa_user_pass_confirm"];
 
-      // kell a felhasználónév ellenörzéshez
-      require_once(ABSPATH . WPINC . '/registration.php');
+		// kell a felhasználónév ellenörzéshez
+		require_once(ABSPATH . WPINC . '/registration.php');
 
-      if(username_exists($user_login)) {
-          // ez a felhasználónév már regelve van
-          nacsa_errors()->add('username_unavailable', __('Ez a felhasználónév már használatban van!'));
-      }
-      if(!validate_username($user_login)) {
-          // érvénytelen felhasználónév
-          nacsa_errors()->add('username_invalid', __('A megadott felhasználónév érvénytelen!'));
-      }
-      if($user_login == '') {
-          // felhasználónév mező üres....
-          nacsa_errors()->add('username_empty', __('Kérem adja meg felhasználónevét!'));
-      }
-      if(!is_email($user_email)) {
-          //érvénytelen email cím
-          nacsa_errors()->add('email_invalid', __('Érvénytelen email cím!'));
-      }
-      if(email_exists($user_email)) {
-          //ezen az email címen már regisztráltak
-          nacsa_errors()->add('email_used', __('Ezzel az email címmel már regisztráltak!'));
-      }
-      if($user_pass == '') {
-          // jelszó nem lehet üres...
-          nacsa_errors()->add('password_empty', __('Kérem adjon meg egy jelszót!'));
-      }
-      if($user_pass != $pass_confirm) {
-          // jelszavak nem egyeznek
-          nacsa_errors()->add('password_mismatch', __('A megadott jelszavak nem egyeznek!'));
-      }
+		if(username_exists($user_login)) {
+			// ez a felhasználónév már regelve van
+			nacsa_errors()->add('username_unavailable', __('Ez a felhasználónév már használatban van!'));
+		}
+		if(!validate_username($user_login)) {
+			// érvénytelen felhasználónév
+			nacsa_errors()->add('username_invalid', __('A megadott felhasználónév érvénytelen!'));
+		}
+		if($user_login == '') {
+			// felhasználónév mező üres....
+			nacsa_errors()->add('username_empty', __('Kérem adja meg felhasználónevét!'));
+		}
+		if(!is_email($user_email)) {
+			//érvénytelen email cím
+			nacsa_errors()->add('email_invalid', __('Érvénytelen email cím!'));
+		}
+		if(email_exists($user_email)) {
+			//ezen az email címen már regisztráltak
+			nacsa_errors()->add('email_used', __('Ezzel az email címmel már regisztráltak!'));
+		}
+		if($user_pass == '') {
+			// jelszó nem lehet üres...
+			nacsa_errors()->add('password_empty', __('Kérem adjon meg egy jelszót!'));
+		}
+		if($user_pass != $pass_confirm) {
+			// jelszavak nem egyeznek
+			nacsa_errors()->add('password_mismatch', __('A megadott jelszavak nem egyeznek!'));
+		}
 
-      // begyüjtjük a hibákat (ha vannak)
-      $errors = nacsa_errors()->get_error_messages();
+		// begyüjtjük a hibákat (ha vannak)
+		$errors = nacsa_errors()->get_error_messages();
 
-      // ha nincs hiba, létre lehet hozni a felhasználót
-      if(empty($errors)) {
+		// ha nincs hiba, létre lehet hozni a felhasználót
+		if(empty($errors)) {
 
-          $new_user_id = wp_insert_user(array(
-                  'user_login'		=> $user_login,
-                  'user_pass'	 	=> $user_pass,
-                  'user_email'		=> $user_email,
-                  'user_url'		=> $user_webpage,
-                  //'user_phone'		=> $user_phone,
-                  'user_registered'	=> date('Y-m-d H:i:s'),
-                  'role'			=> 'subscriber'
-              )
-          );
-          if($new_user_id) {
-              // telefonszámot nem lehet a users táblában rögzíteni , ezért kell a 
-              // usermeta -táblát használni erre a célra!
-              add_user_meta( $new_user_id, 'user_phone', $user_phone );
+			$new_user_id = wp_insert_user(array(
+					'user_login'		=> $user_login,
+					'user_pass'	 	=> $user_pass,
+					'user_email'		=> $user_email,
+					'user_url'		=> $user_webpage,
+					//'user_phone'		=> $user_phone,		//user_meta adatként kell tárolni a usermeta táblában!!
+					'user_registered'	=> date('Y-m-d H:i:s'),
+					'role'			=> 'subscriber'
+				)
+			);
+			if($new_user_id) {
+				// telefonszámot nem lehet a users táblában rögzíteni , ezért kell a 
+				// usermeta -táblát használni erre a célra!
+				add_user_meta( $new_user_id, 'user_phone', $user_phone );
 
-              // admin értesítése az új regisztrációról
-              wp_new_user_notification($new_user_id);
+				// admin értesítése az új regisztrációról
+				wp_new_user_notification($new_user_id);
 
-              // az új felhasználó beléptetése
-              wp_setcookie($user_login, $user_pass, true);
-              wp_set_current_user($new_user_id, $user_login);	
-              do_action('wp_login', $user_login);
+				// az új felhasználó beléptetése
+				wp_setcookie($user_login, $user_pass, true);
+				wp_set_current_user($new_user_id, $user_login);	
+				do_action('wp_login', $user_login);
 
-              // belépés után átirányítás....
-              // saját oldalára kellene itt is sztem...
-              // oldal létrehozása a felhasználónévvel
-                $my_post = array(
+				//új oldal tartalma:
+				$newPageContent = "<h1>$user_login oldala</h1>";
+				$newPageContent .= "<p>Kérem tekintse meg legújabb bejegyzéseinket!</p>";
+				$newPageContent .= "<p>Lehetőségek:</p>";
+				$newPageContent .= '<p><a href="' . home_url("/profile-$user_login") . '">Profilom</a></p>';
+				$newPageContent .= '<p><a href="' . home_url() . '">Főoldal</a></p>';
+
+              	//saját oldal létrehozása a felhasználónévvel
+            	$my_page = array(
                     'post_title'    => wp_strip_all_tags( $user_login ),
-                    'post_content'  => "<h1>$user_login oldala</h1>",
+                    'post_content'  => $newPageContent,
                     'post_status'   => 'publish',
                     'post_author'   => 1,
                     'post_type'     => 'page'
                 );
                 // oldal elhelyezése az adatbázisban
-                wp_insert_post( $my_post );
+                wp_insert_post( $my_page );
+
+
+				//most jöhet a profil oldal létrehozása:
+				$arrUserDatas = array(
+					'Nev'		=> $user_login,
+					'Password'	 	=> $user_pass,
+					'Email'		=> $user_email,
+					'user_url'		=> $user_webpage);
+
+				$newPageContent = nacsa_registration_form_fields(true, $arrUserDatas);
+				$my_profile_page = array(
+                    'post_title'    => wp_strip_all_tags( 'profile-' . $user_login ),
+                    'post_content'  => $newPageContent,
+                    'post_status'   => 'publish',
+                    'post_author'   => 1,
+                    'post_type'     => 'page'
+                );
+				// oldal elhelyezése az adatbázisban
+                wp_insert_post( $my_profile_page );
+
 
                 // átirányítás az új oldalra
                 wp_redirect(home_url("/$user_login")); exit;
-          }
+          	}
 
-      }
+      	}
 
-  }
+  	}
 }
 add_action('init', 'nacsa_add_new_member');
 
 
-// hibák követése
+/**
+ * Hibák gyüjtése
+ *
+ * @return array
+ */
 function nacsa_errors(){
     static $wp_error;
     return isset($wp_error) ? $wp_error : ($wp_error = new WP_Error(null, null, null));
 }
 
 
-// formokról érkező esetleges hibaüzenetek megjelenítése
+/**
+ * Formokról érkező esetleges hibaüzenetek megjelenítése
+ *
+ * @return void
+ */
 function nacsa_show_error_messages() {
 	if($codes = nacsa_errors()->get_error_codes()) {
 		echo '<div class="nacsa_errors">';
@@ -297,15 +356,23 @@ function nacsa_show_error_messages() {
 }
 
 
-// formok stílusának beregisztrálása (forms.css)
+/**
+ * Formok stílusának beregisztrálása (forms.css)
+ *
+ * @return void
+ */
 function nacsa_register_css() {
 	wp_register_style('nacsa-form-css', plugin_dir_url( __FILE__ ) . '/css/forms.css');
 }
 add_action('init', 'nacsa_register_css');
 
 
-// stílus fájlunk betöltése amikor szükséges!
-// csak akkor töltjük be ha jelen van a SHORTCODE !!
+/**
+ * Stílus fájl betöltése amikor szükséges!
+ * Csak akkor töltjük be ha jelen van vmelyik SHORTCODE !!
+ *
+ * @return void
+ */
 function nacsa_print_css() {
 	global $nacsa_load_css;
  
